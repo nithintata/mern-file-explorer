@@ -1,38 +1,91 @@
-.App {
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+a {
+  color: black !important;
+}
+
+.myfont {
+  font-family: 'Pacifico', cursive;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100vh;
+}
+
+.mycard {
+  margin-top: 30px;
+}
+.auth-card {
+  padding: 20px;
   text-align: center;
+  max-width: 400px;
+  margin: 15px auto;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.gallery {
+  display: flex !important;
+  flex-wrap: wrap;
+  justify-content: space-around;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.item {
+  width: 30%;
+  margin-bottom: 20px;
+  cursor: pointer;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+div.tabs-content.carousel.carousel-slider {
+  margin-top: 20px;
+  height: 500px !important;
+}
+
+.home-card {
+  max-width: 500px;
+  height: max-content;
+  margin: 25px auto;
+}
+
+#toast-container {
+  top: 35px !important;
+  right: 25px !important;
+  left: auto !important;
+}
+
+.collection-item {
+  width: 100%;
+  border-bottom: 1px solid #26a69a !important;
+}
+
+.progress {
+  margin-top: 1px !important;
+}
+
+/*.sidenav-overlay {
+  display: contents !important;
+}*/
+
+.card .card-image {
+  position: initial !important;
+}
+
+.myrow {
+  margin: 10px auto;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: space-between;
+  max-width: 600px;
 }
 
-.App-link {
-  color: #61dafb;
+.myfooter {
+  position: fixed;
+  z-index: 990;
+  background-color: white;
+  bottom: 0px;
+  box-shadow: rgba(0, 0, 0, 0.14) 0px -5px 10px 0px,
+  rgba(0, 0, 0, 0.12) 5px 0px 20px -2px, rgba(0, 0, 0, 0.2) 5px 0px 0px 0px;
+  width: 100%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.flink {
+  padding: 0px 5px
 }
