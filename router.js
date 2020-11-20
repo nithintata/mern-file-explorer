@@ -2,6 +2,8 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const authenticate = require('./authenticate');
+const Folders = require('./models/folder');
+const File = require('./models/file');
 
 var router = express.Router();
 router.use(bodyParser.json());
@@ -15,6 +17,7 @@ router.get('/check', authenticate.verifyUser, (req, res, next) => {
     res.send("Protected Route Working")
 });
 
+/* User Authentication */
 router.post('/auth/signIn', (req, res, next) => {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -36,5 +39,61 @@ router.post('/auth/signIn', (req, res, next) => {
     res.setHeader('Content-Type', 'application/json');
     res.json({token});
 });
+
+/* Creating a new Folder */
+router.post('/create/newFolder', authenticate.verifyUser, (req, res, next) => {
+    Folders.findOne({path : req.body.path}).then((folder) => {
+        if (folder) {
+            res.statusCode = 422;
+            res.setHeader('Content-Type', 'application/json');
+            res.json({err: "Folder name already exists"});
+            return;
+        }
+
+        // if there is no folder with that name then we proceed to create a new one
+        Folders.create(req.body).then((folder) => {
+            //we also need to add it in it's parent directory list of folders
+            var curr_dir = req.body.path;
+            var parent_dir = "/" + curr_dir.split('/').slice(1, -2).join('/') + "/";
+            if (parent_dir === "//") {
+                parent_dir = "/";
+            }
+            Folders.findOneAndUpdate({path: parent_dir}, {
+                $push: {folders: folder._id}
+            }, {new: true}, (err, result) => {
+                if (err) {
+                    res.statusCode = 422;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json({err: "Cannot append the file to parent directory"});
+                    return;
+                }
+            });
+            console.log("New Folder created successfully");
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json({folder, msg: "Folder created Successfully"});
+        }, (err) => next(err));
+    }, (err) => next(err)).catch((err) => next(err));
+});
+
+/*Getting all the files and folders */
+router.post('/getFiles', authenticate.verifyUser, (req, res, next) => {
+    const{ path } = req.body;
+    Folders.findOne({path: path})
+    .populate("folders", "_id, path")
+    .then((folder) => {
+        if (!folder) {
+            res.statusCode = 422;
+            res.setHeader('Content-Type', 'application/json');
+            res.json({err: "Folder you are trying to access is not present"});
+            return;
+        }
+
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json({folder});
+    });
+});
+
 
 module.exports = router;
