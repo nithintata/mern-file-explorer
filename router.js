@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const authenticate = require('./authenticate');
 const Folders = require('./models/folder');
-const File = require('./models/file');
+const Files = require('./models/file');
 
 var router = express.Router();
 router.use(bodyParser.json());
@@ -40,6 +40,37 @@ router.post('/auth/signIn', (req, res, next) => {
     res.json({token});
 });
 
+/* Creating a new File */
+router.post('/create/newFile', authenticate.verifyUser, (req, res, next) => {
+    var file_path = req.body.path + req.body.name;
+    Files.findOne({path: file_path}).then((file) => {
+        if (file) {
+            res.statusCode = 422;
+            res.setHeader('Content-Type', 'application/json');
+            res.json({err: "File name already exists"});
+            return;
+        }
+
+        Files.create(req.body.file).then((file) => {
+            Folders.findOneAndUpdate({path: req.body.path}, {
+                $push: {files: file._id}
+            }, {new: true}, (err, result) => {
+                if (err) {
+                    res.statusCode = 422;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json({err: "Cannot append the file to parent directory"});
+                    return;
+                }
+            });
+
+            console.log("New File Created Successfully");
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json({file, msg: "File created Successfully"})
+        }, (err) => next(err));
+    }, (err) => next(err)).catch((err) => next(err));
+});
+
 /* Creating a new Folder */
 router.post('/create/newFolder', authenticate.verifyUser, (req, res, next) => {
     Folders.findOne({path : req.body.path}).then((folder) => {
@@ -64,14 +95,14 @@ router.post('/create/newFolder', authenticate.verifyUser, (req, res, next) => {
                 if (err) {
                     res.statusCode = 422;
                     res.setHeader('Content-Type', 'application/json');
-                    res.json({err: "Cannot append the file to parent directory"});
+                    res.json({err: "Cannot append the folder to parent directory"});
                     return;
                 }
             });
             console.log("New Folder created successfully");
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
-            res.json({folder, msg: "Folder created Successfully"});
+            res.json({folder});
         }, (err) => next(err));
     }, (err) => next(err)).catch((err) => next(err));
 });
@@ -80,7 +111,8 @@ router.post('/create/newFolder', authenticate.verifyUser, (req, res, next) => {
 router.post('/getFiles', authenticate.verifyUser, (req, res, next) => {
     const{ path } = req.body;
     Folders.findOne({path: path})
-    .populate("folders", "_id, path")
+    .populate("folders")
+    .populate("files")
     .then((folder) => {
         if (!folder) {
             res.statusCode = 422;

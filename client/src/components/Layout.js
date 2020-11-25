@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Link , useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import M from 'materialize-css';
+import ToolBar from "./ToolBar";
 
 
 const Layout = () => {
@@ -12,6 +13,11 @@ const Layout = () => {
     /*if (path !== '/') {
         path = path + "/";
     }*/
+
+    useEffect(() => {
+        var dropDowns = document.querySelectorAll('.dropdown-trigger');
+        var instances = M.Dropdown.init(dropDowns, {});
+    }, [folder]);
 
     useEffect(() => {
         fetch('/getFiles', {
@@ -32,20 +38,41 @@ const Layout = () => {
 
     return (
         <> {
-            !folder ? <h3> Working... </h3> : 
-            <div className = "container">
-                <div className="flexContainer">
-                    
+            
+            !folder ? <h3 className="myfont"> Loading... </h3> :
+                <div className="container">
+                    <ToolBar />
+                    <hr />
+                    <div className="flexContainer">
+                        {folder.folders.length == 0 && folder.files.length == 0 ?
+                            <h4 className="myfont" style={{ backgroundColor: "#2e3a48" }}>This Folder is Empty...</h4> : null}
+
                         {folder.folders.map((item, index) =>
-                            <div key={index} className = "flexItem">
-                                <Link to = {item.path}><i style = {{color: "#4267b2"}} className ="large material-icons">folder</i></Link>
-                                <p style={{margin: "0px"}}>{item._id}</p>
-                                <p style={{margin: "0px"}}>{curr_dir}</p>
+                            <div key={index} className="flexItem innerItems">
+                                <Link to={item.path}><i style={{ color: "#4267b2" }} className="large material-icons">folder</i></Link>
+                                <p style={{ margin: "0px" }}>{item.name}</p>
                             </div>
                         )}
-                   
+
+                        {folder.files.map((item, index) =>
+                            <div key={index} className="flexItem innerItems">
+                                <a href={item.url} target="blank">
+                                    <i style={{ color: "#d53939" }} className="large material-icons">{item.fileType === 'pdf' ? 'picture_as_pdf': "image"}</i>
+                                </a>
+                                <div style={{ margin: "0px" }}>{item.name}
+                                <a class='dropdown-trigger' href='#' data-target={item._id}>
+                                    <i style = {{paddingLeft: "5px"}} className="tiny material-icons">more_vert</i>
+                                </a></div>
+
+                                <ul id={item._id} class='dropdown-content'>
+                                    <li><a href = {item.url.substring(0, 46) + "/fl_attachment" + item.url.substring(46)} target = "blank">Download</a></li>
+                                    <li><a href="#!">Share</a></li>
+                                    <li><a href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
         }
         </>
     );

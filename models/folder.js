@@ -8,11 +8,6 @@ const folderSchema = new Schema({
         required: true
     },
 
-    fileType: {
-        type: String,
-        required: true
-    },
-
     folders: [{
         type: ObjectId,
         ref: "Folder"

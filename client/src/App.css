@@ -1,11 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
-a {
-  color: black !important;
-}
+
 
 .myfont {
   font-family: 'Pacifico', cursive;
+  color: #067267;
 }
 
 .mycard {
@@ -16,6 +15,7 @@ a {
   text-align: center;
   max-width: 400px;
   margin: 15px auto;
+  background-color: #2e3a48;
 }
 
 .item {
@@ -53,24 +53,45 @@ div.tabs-content.carousel.carousel-slider {
 .flexContainer {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   background-color: #2e3a48;
   align-content: flex-start;
-  height: 600px;
+  min-height: 600px;
 }
 
+.innerItems {
+  text-align: center;
+  padding: 10px;
+  margin: 10px;
+}
 
 .card .card-image {
   position: initial !important;
 }
 
-.myrow {
-  margin: 10px auto;
-  display: flex;
-  justify-content: space-between;
-  max-width: 600px;
+.material-icons {
+  cursor: pointer;
+  color: cornsilk;
 }
 
-.flink {
-  padding: 0px 5px
+input[type = 'text'] {
+  color: white;
+}
+
+.dropdown-content li a {
+  color: black !important;
+}
+
+.dropdown-content .material-icons {
+  color: black;
+}
+
+@media screen and (max-width: 500px) {
+  .container {
+    width: 100%;
+  }
+
+  .flexContainer {
+    justify-content: space-evenly;
+  }
 }
