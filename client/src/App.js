@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch, useHistory } from 'react-router-dom';
 import SignIn from './components/SignIn';
 import './App.css';
 import Layout from './components/Layout';
+import Search from './components/Search';
 
 const MyRouter = () => {
   /*const history = useHistory();
@@ -17,6 +18,9 @@ const MyRouter = () => {
     <Switch>
       <Route exact path="/signIn">
         <SignIn />
+      </Route>
+      <Route exact path = "/search">
+        <Search />
       </Route>
       <Route component = {Layout} />
     </Switch>

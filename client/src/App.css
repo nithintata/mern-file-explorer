@@ -57,6 +57,11 @@ div.tabs-content.carousel.carousel-slider {
   background-color: #2e3a48;
   align-content: flex-start;
   min-height: 600px;
+  outline: none;
+}
+
+.modal {
+  width: 45%;
 }
 
 .innerItems {
@@ -74,6 +79,27 @@ div.tabs-content.carousel.carousel-slider {
   color: cornsilk;
 }
 
+.linkContainer {
+  width: 90%;
+  border: 1px solid black;
+  border-radius: 10px;
+  color: black;
+  padding: 5px;
+  padding-bottom: 0px;
+  float: left;
+  resize: none;
+}
+
+.selectInputContainer {
+  float: left;
+  margin: 5px 10px;
+  width: auto;
+}
+
+hr {
+  clear: both;
+}
+
 input[type = 'text'] {
   color: white;
 }
@@ -89,6 +115,10 @@ input[type = 'text'] {
 @media screen and (max-width: 500px) {
   .container {
     width: 100%;
+  }
+
+  .modal {
+    width: 75%;
   }
 
   .flexContainer {

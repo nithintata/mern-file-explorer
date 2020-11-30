@@ -35,7 +35,6 @@ const ToolBar = () => {
                         'Authorization': 'Bearer ' + localStorage.getItem('jwt')
                     },
                     body: JSON.stringify({
-                        name: fileName,
                         path: path,
                         file: {
                             name: fileName,
@@ -44,22 +43,22 @@ const ToolBar = () => {
                             url: data.secure_url
                         }
                     })
+                }).then(res => res.json()).then((data) => {
+                    const { err, file } = data;
+                    setIsUploading(false);
+                    setFile('');
+                    console.log(file);
+                    if (err) {
+                        M.toast({ html: err });
+                    }
+                    else {
+                        M.toast({ html: "File created Successfully" })
+                        window.location.reload(false);
+                    }
                 })
-                setIsUploading(false);
-                setFile('');
-                console.log(path);
-                history.push(path);
-                M.toast({ html: "File created Successfully" });
-                window.location.reload(false);
             })
         }
     }, [file]);
-
-    /*let widget = window.cloudinary.createUploadWidget({
-        cloudName: "nithin",
-        uploadPreset: "mfckh99u",
-        folder: 'custom'
-    }, (err, result) => {});*/
 
     const uploadFile = (file) => {
         setIsUploading(true);
@@ -108,6 +107,52 @@ const ToolBar = () => {
         history.push('/');
     }
 
+    const downloadFolder = () => {
+        M.toast({html: "Creating Zip file!"});
+        fetch('/downloadFolder', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            },
+            body: JSON.stringify({
+                path: path
+            })
+        }).then(res => res.json()).then((data) => {
+            const { err, url} = data;
+            if (err) {
+                M.toast({html: err});
+            }
+            else {
+                window.open(url);
+                M.toast({html: "Starting Download.."});
+            }
+        })
+    }
+
+    const deleteFolder = () => {
+        M.toast({html: "Deleting Folder..This may take a while"});
+        fetch('/deleteFolder', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            },
+            body: JSON.stringify({
+                path: path
+            })
+        }).then(res => res.json()).then((data) => {
+            const { err, msg } = data;
+            if (err) {
+                M.toast({html: err});
+            }
+            else {
+                M.toast({html: msg});
+                history.push(parent_path);
+            }
+        })
+    }
+
     return (
         <>
         <h4 className = "myfont" style={{textAlign: 'center'}}>Online File Explorer</h4>
@@ -142,15 +187,15 @@ const ToolBar = () => {
                     </div>
 
                     <div className="flexItem" style={{ margin: "10px" }}>
-                        <i className="small material-icons">cloud_download</i>
+                        <i className="small material-icons" onClick={(e) => downloadFolder()}>cloud_download</i>
                     </div>
 
                     <div className="flexItem" style={{ margin: "10px" }}>
-                        <i className="small material-icons">delete</i>
+                        <i className="small material-icons" onClick={(e) => deleteFolder()}>delete</i>
                     </div>
 
                     <div className="flexItem" style={{ margin: "10px" }}>
-                        <i className="small material-icons">search</i>
+                        <Link to={"/search"}><i className="small material-icons">search</i></Link>
                     </div>
 
 
