@@ -5,8 +5,8 @@ const logger = require('morgan');
 const mongoose = require('mongoose');
 const FileRouter = require('./routes/fileRouter');
 const FolderRouter = require('./routes/folderRouter');
-const dotenv = require('dotenv');
-dotenv.config();
+//const dotenv = require('dotenv');
+//dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 

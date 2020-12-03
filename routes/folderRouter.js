@@ -9,7 +9,7 @@ const Files = require('../models/file');
 var router = express.Router();
 router.use(bodyParser.json());
 
-require('dotenv').config();
+//require('dotenv').config();
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
