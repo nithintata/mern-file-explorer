@@ -28,6 +28,10 @@ const fileSchema = new Schema({
     url: {
         type: String,
         required: true
+    }, 
+
+    size: {
+        type: String
     }
 }, {
     timestamps: true

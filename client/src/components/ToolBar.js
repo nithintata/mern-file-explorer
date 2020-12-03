@@ -2,6 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import M from 'materialize-css';
 
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
 const ToolBar = () => {
 
     const history = useHistory();
@@ -40,7 +49,8 @@ const ToolBar = () => {
                             name: fileName,
                             fileType,
                             path: path + fileName,
-                            url: data.secure_url
+                            url: data.secure_url,
+                            size: formatBytes(data.bytes)
                         }
                     })
                 }).then(res => res.json()).then((data) => {
@@ -108,7 +118,7 @@ const ToolBar = () => {
     }
 
     const downloadFolder = () => {
-        M.toast({html: "Creating Zip file!"});
+        M.toast({ html: "Creating Zip file!" });
         fetch('/downloadFolder', {
             method: 'post',
             headers: {
@@ -119,19 +129,19 @@ const ToolBar = () => {
                 path: path
             })
         }).then(res => res.json()).then((data) => {
-            const { err, url} = data;
+            const { err, url } = data;
             if (err) {
-                M.toast({html: err});
+                M.toast({ html: err });
             }
             else {
                 window.open(url);
-                M.toast({html: "Starting Download.."});
+                M.toast({ html: "Starting Download.." });
             }
         })
     }
 
     const deleteFolder = () => {
-        M.toast({html: "Deleting Folder..This may take a while"});
+        M.toast({ html: "Deleting Folder..This may take a while" });
         fetch('/deleteFolder', {
             method: 'post',
             headers: {
@@ -144,10 +154,10 @@ const ToolBar = () => {
         }).then(res => res.json()).then((data) => {
             const { err, msg } = data;
             if (err) {
-                M.toast({html: err});
+                M.toast({ html: err });
             }
             else {
-                M.toast({html: msg});
+                M.toast({ html: msg });
                 history.push(parent_path);
             }
         })
@@ -155,22 +165,32 @@ const ToolBar = () => {
 
     return (
         <>
-        <h4 className = "myfont" style={{textAlign: 'center'}}>Online File Explorer</h4>
+            <h4 className="myfont" style={{ textAlign: 'center' }}>
+                Online File Explorer
+            <i className="tiny material-icons" onClick={(e) => {
+                    localStorage.clear();
+                    M.toast({ html: "Logged Out Successfully!!" });
+                    history.push("/signIn");
+                }}>exit_to_app</i>
+            </h4>
             {isUploading ?
                 <h4 className="myfont" style={{ textAlign: "center" }}>Uploading Please don't navigate away</h4> :
 
-                <div className="flexContainer" style={{ minHeight: "0px", padding: "10px 20px", justifyContent: "flex-start" }}>
+                <div className="flexContainer" style={{ minHeight: "0px", padding: "10px 20px", justifyContent: "space-around" }}>
 
-                    <div className="flexItem" style={{ margin: "10px" }}>
+                    <div className="flexItem">
                         <Link to={parent_path}><i className="small material-icons">arrow_back</i></Link>
+                        <div>Back</div>
                     </div>
 
-                    <div className="flexItem" style={{ margin: "10px" }}>
+                    <div className="flexItem">
                         <i className="small material-icons" onClick={pushToHome}>home</i>
+                        <div>Home</div>
                     </div>
 
-                    <div className="flexItem" style={{ margin: "10px" }}>
+                    <div className="flexItem">
                         <i className="small material-icons" onClick={toggleInput}>create_new_folder</i>
+                        <div>New Folder</div>
                     </div>
 
                     <div className="flexItem">
@@ -179,23 +199,27 @@ const ToolBar = () => {
                             onKeyPress={(e) => e.key === 'Enter' ? createFolder() : null} />
                     </div>
 
-                    <div className="flexItem" style={{ margin: "10px" }}>
+                    <div className="flexItem">
                         <label for="file-input">
                             <i className="small material-icons">cloud_upload</i>
                         </label>
+                        <div>New File</div>
                         <input id="file-input" type="file" onChange={(e) => uploadFile(e.target.files[0])} style={{ display: "none" }} />
                     </div>
 
-                    <div className="flexItem" style={{ margin: "10px" }}>
+                    <div className="flexItem">
                         <i className="small material-icons" onClick={(e) => downloadFolder()}>cloud_download</i>
+                        <div>Download</div>
                     </div>
 
-                    <div className="flexItem" style={{ margin: "10px" }}>
-                        <i className="small material-icons" onClick={(e) => deleteFolder()}>delete</i>
+                    <div className="flexItem">
+                        <i className="small material-icons" onClick={(e) => { if (window.confirm("Are you sure you wish to delete this Folder?")) deleteFolder() }}>delete</i>
+                        <div>Delete</div>
                     </div>
 
-                    <div className="flexItem" style={{ margin: "10px" }}>
+                    <div className="flexItem">
                         <Link to={"/search"}><i className="small material-icons">search</i></Link>
+                        <div>Search</div>
                     </div>
 
 

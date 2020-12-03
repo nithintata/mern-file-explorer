@@ -3,24 +3,28 @@ import { Link, useHistory } from 'react-router-dom';
 import M from 'materialize-css';
 import ToolBar from "./ToolBar";
 
-
 const Layout = () => {
 
     const innerModel = useRef(null);
     const textAreaRef = useRef(null);
     const [copySuccess, setCopySuccess] = useState('');
     const [folder, setFolder] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const history = useHistory();
     var path = history.location.pathname;
-    //var curr_dir = path.split("/")[-1];
 
     useEffect(() => {
         var dropDowns = document.querySelectorAll('.dropdown-trigger');
         var instances = M.Dropdown.init(dropDowns, {});
-        M.Modal.init(innerModel.current, {onCloseStart : () => setCopySuccess('')});
+        M.Modal.init(innerModel.current, { onCloseStart: () => setCopySuccess('') });
     }, [folder]);
 
     useEffect(() => {
+        if (!localStorage.getItem('jwt')) {
+            history.push('/signIn');
+            return;
+        }
+        setIsLoading(true);
         fetch('/getFiles', {
             method: 'post',
             headers: {
@@ -32,8 +36,9 @@ const Layout = () => {
             })
         }).then(res => res.json()).then((data) => {
             const { err, folder } = data;
+            setIsLoading(false);
             if (err) {
-                M.toast({html: err});
+                M.toast({ html: err });
                 history.push('/');
             }
             else {
@@ -44,7 +49,7 @@ const Layout = () => {
     }, [path]);
 
     const getShortenedLink = (url) => {
-        M.toast({html: "Creating tiny URL!"});
+        M.toast({ html: "Creating tiny URL!" });
         fetch('https://api-ssl.bitly.com/v4/shorten', {
             method: 'post',
             headers: {
@@ -78,10 +83,10 @@ const Layout = () => {
         el.select();
         document.execCommand('copy');
         document.body.removeChild(el);
-      }
-    
+    }
+
     const deleteFile = (file) => {
-        M.toast({html: "Deleting the file"});
+        M.toast({ html: "Deleting the file" });
         fetch('/deleteFile', {
             method: 'post',
             headers: {
@@ -93,8 +98,8 @@ const Layout = () => {
                 path: file.path
             })
         }).then((res) => res.json()).then((data) => {
-            M.toast({html: "Cloudinary: " + data.result});
-            M.toast({html: "File Deleted Successfully.."});
+            M.toast({ html: "Cloudinary: " + data.result });
+            M.toast({ html: "File Deleted Successfully.." });
             window.location.reload(false);
         })
     }
@@ -102,60 +107,70 @@ const Layout = () => {
 
     return (
         <> {
-            
             !folder ? <h3 className="myfont"> Loading... </h3> :
                 <div className="container">
                     <ToolBar />
                     <hr />
-                    <div style = {{backgroundColor: "#2e3a48", padding: "5px"}}>
-                        {path.split("/").join(" / ")} 
-                    <i style={{paddingLeft: "5px"}} className = "tiny material-icons" onClick={() => copyToClipboard(path)}>content_copy</i>
+                    {
+                        isLoading ?
+                            <div style={{ backgroundColor: "#2e3a48", marginBottom: "0px" }} className="progress">
+                                <div className="indeterminate"></div>
+                            </div> : null
+                    }
+
+                    <div style={{ backgroundColor: "#2e3a48", padding: "5px" }}>
+                        {path.split("/").join(" / ")}
+                        <i style={{ paddingLeft: "5px" }} className="tiny material-icons" onClick={() => copyToClipboard(path)}>content_copy</i>
                     </div>
+
                     <div className="flexContainer">
-                        {folder.folders.length == 0 && folder.files.length == 0 ?
-                            <h4 className="myfont" style={{ backgroundColor: "#2e3a48" }}>This Folder is Empty...</h4> : null}
+                        {
+                            !isLoading ?
+                                <>
+                                    {folder.folders.length === 0 && folder.files.length === 0 ?
+                                        <h4 className="myfont" style={{ backgroundColor: "#2e3a48" }}>This Folder is Empty...</h4> : null}
 
-                        {folder.folders.map((item, index) =>
-                            <div key={index} className="flexItem innerItems">
-                                <Link to={item.path}><i style={{ color: "#4267b2" }} className="large material-icons">folder</i></Link>
-                                <p style={{ margin: "0px" }}>{item.name}</p>
-                            </div>
-                        )}
+                                    {folder.folders.map((item, index) =>
+                                        <div key={index} className="flexItem innerItems">
+                                            <Link to={item.path}><i style={{ color: "#4267b2" }} className="large material-icons">folder</i></Link>
+                                            <p style={{ margin: "0px" }}>{item.name}</p>
+                                        </div>
+                                    )}
 
-                        {folder.files.map((item, index) =>
-                            <div key={index} className="flexItem innerItems">
-                                <a href={item.url} target="blank">
-                                    <i style={{ color: "#d53939" }} className="large material-icons">{item.fileType === 'pdf' ? 'picture_as_pdf': "image"}</i>
-                                </a>
-                                <div style={{ margin: "0px" }}>{item.name}
-                                <a className='dropdown-trigger' href='#' data-target={item._id}>
-                                    <i style = {{paddingLeft: "5px"}} className="tiny material-icons">more_vert</i>
-                                </a></div>
+                                    {folder.files.map((item, index) =>
+                                        <div key={index} className="flexItem innerItems">
+                                            <a href={item.url} target="blank">
+                                                <i style={{ color: "#d53939" }} className="large material-icons">{item.fileType === 'pdf' ? 'picture_as_pdf' : "image"}</i>
+                                            </a>
+                                            <div style={{ margin: "0px" }}>{item.name}
+                                                <a className='dropdown-trigger' href='#' data-target={item._id}>
+                                                    <i style={{ paddingLeft: "5px" }} className="tiny material-icons">more_vert</i>
+                                                </a></div>
 
-                                <ul id={item._id} className='dropdown-content'>
-                                    <li><a href = {item.url.substring(0, 46) + "/fl_attachment" + item.url.substring(46)} target = "blank">Download</a></li>
-                                    <li><a href="#" onClick = {() => getShortenedLink(item.url)}>Share</a></li>
-                                    <li><a href="#" onClick = {() => deleteFile(item)}>Delete</a></li>
-                                    <li><a href="#">Move</a></li>
-                                </ul>
-                            </div>
-                        )}
+                                            <ul id={item._id} className='dropdown-content'>
+                                                <li><a href={item.url.substring(0, 46) + "/fl_attachment" + item.url.substring(46)} target="blank">Download</a></li>
+                                                <li><a href="#" onClick={() => getShortenedLink(item.url)}>Share</a></li>
+                                                <li><a href="#" onClick={() => deleteFile(item)}>Delete</a></li>
+                                                <li><a href="#">Move</a></li>
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                </> : null
+                        }
                     </div>
-                    
-                    {/* Model instance for showing shortened link */}
-                    <div id="modal1" className="modal" ref = {innerModel}>
+
+                    <div id="modal1" className="modal" ref={innerModel}>
                         <div className="modal-content">
-                            <p style={{color: "black"}}>Anyone can view this document through this link</p>
-                            {/*<textarea rows="1" defaultValue="Short Link.." ref={textAreaRef} className = "linkContainer" readOnly />*/}
-                            <textarea class="materialize-textarea" style={{width: "auto"}}  ref={textAreaRef} readOnly></textarea>
-                            <i style={{color: "black", padding: "5px"}} onClick={(e) => copyContent(e)} className = "small material-icons">content_copy</i> 
-                            <p style = {{color: "green"}}><b>{copySuccess}</b></p>
+                            <p style={{ color: "black" }}>Anyone can view this document through this link</p>
+                            <textarea className="materialize-textarea" style={{ width: "auto" }} ref={textAreaRef} readOnly></textarea>
+                            <i style={{ color: "black", padding: "5px" }} onClick={(e) => copyContent(e)} className="small material-icons">content_copy</i>
+                            <p style={{ color: "green" }}><b>{copySuccess}</b></p>
                         </div>
                         <div className="modal-footer">
                             <a href="#!" className="modal-close waves-effect waves-green btn-flat">Close</a>
                         </div>
                     </div>
-  
                 </div>
         }
         </>

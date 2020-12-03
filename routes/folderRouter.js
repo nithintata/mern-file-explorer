@@ -9,6 +9,13 @@ const Files = require('../models/file');
 var router = express.Router();
 router.use(bodyParser.json());
 
+require('dotenv').config();
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 /* Creating a new Folder */
 router.post('/create/newFolder', authenticate.verifyUser, (req, res, next) => {
     Folders.findOne({ path: req.body.path }).then((folder) => {
@@ -54,6 +61,13 @@ router.post('/downloadFolder', authenticate.verifyUser, (req, res, next) => {
             res.statusCode = 422;
             res.setHeader('Content-Type', 'application/json');
             res.json({err: "Folder not present"});
+            return;
+        }
+
+        if (folder.folders.length == 0 && folder.files.length == 0) {
+            res.statusCode = 422;
+            res.setHeader('Content-Type', 'application/json');
+            res.json({err: "Cannot download empty folder"});
             return;
         }
         var url = cloudinary.utils.download_zip_url({

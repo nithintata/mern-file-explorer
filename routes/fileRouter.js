@@ -9,9 +9,17 @@ const Files = require('../models/file');
 var router = express.Router();
 router.use(bodyParser.json());
 
+require('dotenv').config();
 cloudinary.config({
-    
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+router.get('/', (req, res, next) => {
+    res.send(process.env.NODE_ENV);
+})
+
 /* User Authentication */
 router.post('/auth/signIn', (req, res, next) => {
     const { username, password } = req.body;
@@ -114,5 +122,44 @@ router.post('/deleteFile', authenticate.verifyUser, (req, res, next) => {
         });
     });
 });
+
+/* filtering the documents */
+router.post('/filterSearch', authenticate.verifyUser, (req, res, next) => {
+    if (req.body.name.length < 2) {
+        res.statusCode = 422;
+        return;
+    }
+    let pattern = new RegExp("^" + req.body.name);
+    if (req.body.searchFor === 'file') {
+        if (req.body.fileType === 'all') {
+            Files.find({name: {$regex: pattern , $options : "i"}})
+            .sort(req.body.order + req.body.sortBy)
+            .then((files) => {
+                console.log(files);
+                res.json(files);
+            });
+        }
+        else {
+            Files.find({$and: [
+                {name: {$regex: pattern , $options : "i"}},
+                {fileType: req.body.fileType}
+            ]})
+            .sort(req.body.order + req.body.sortBy)
+            .then((files) => {
+                console.log(files);
+                res.json(files);
+            });
+        }
+    }
+
+    else {
+        Folders.find({name: {$regex: pattern , $options : "i"}})
+        .sort(req.body.order + req.body.sortBy)
+        .then((folders) => {
+            console.log(folders);
+            res.json(folders);
+        });
+    }
+})
 
 module.exports = router;

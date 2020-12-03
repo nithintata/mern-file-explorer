@@ -6,13 +6,6 @@ import Layout from './components/Layout';
 import Search from './components/Search';
 
 const MyRouter = () => {
-  /*const history = useHistory();
-  useEffect(() => {
-    const { token } = JSON.parse(localStorage.getItem('jwt'));
-    if (!token) {
-      history.push('/signIn');
-    }
-  }, []);*/
 
   return (
     <Switch>

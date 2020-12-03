@@ -22,12 +22,6 @@ connect.then((db) => {
     console.log("Connected to Database!");
 });
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(FileRouter);
-app.use(FolderRouter);
-
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static('client/build'));
     app.get('*', (req, res) => {
@@ -35,6 +29,11 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(FileRouter);
+app.use(FolderRouter);
 
 // error handler
 app.use(function(err, req, res, next) {

@@ -24,9 +24,12 @@
   cursor: pointer;
 }
 
-div.tabs-content.carousel.carousel-slider {
-  margin-top: 20px;
-  height: 500px !important;
+td i{
+  padding: 0px 10px;
+}
+
+tr {
+  border-color: white;
 }
 
 .home-card {
@@ -60,6 +63,17 @@ div.tabs-content.carousel.carousel-slider {
   outline: none;
 }
 
+.collapsible-header {
+  background-color: black !important;
+  font-size: 17px;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
 .modal {
   width: 45%;
 }
@@ -79,25 +93,14 @@ div.tabs-content.carousel.carousel-slider {
   color: cornsilk;
 }
 
-.linkContainer {
-  width: 90%;
-  border: 1px solid black;
-  border-radius: 10px;
-  color: black;
-  padding: 5px;
-  padding-bottom: 0px;
-  float: left;
-  resize: none;
-}
-
 .selectInputContainer {
   float: left;
   margin: 5px 10px;
   width: auto;
 }
 
-hr {
-  clear: both;
+.collection {
+  border: none;
 }
 
 input[type = 'text'] {
@@ -121,7 +124,11 @@ input[type = 'text'] {
     width: 75%;
   }
 
-  .flexContainer {
-    justify-content: space-evenly;
+  .flexItem {
+    margin: 5px;
+  }
+
+  td i {
+    padding: 0px;
   }
 }
