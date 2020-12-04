@@ -176,21 +176,21 @@ const ToolBar = () => {
             {isUploading ?
                 <h4 className="myfont" style={{ textAlign: "center" }}>Uploading Please don't navigate away</h4> :
 
-                <div className="flexContainer" style={{ minHeight: "0px", padding: "10px 20px", justifyContent: "space-around" }}>
+                <div className="toolBarContainer">
 
                     <div className="flexItem">
                         <Link to={parent_path}><i className="small material-icons">arrow_back</i></Link>
-                        <div>Back</div>
+                        <div className="hide-on-med-and-down">Back</div>
                     </div>
 
                     <div className="flexItem">
                         <i className="small material-icons" onClick={pushToHome}>home</i>
-                        <div>Home</div>
+                        <div className="hide-on-med-and-down">Home</div>
                     </div>
 
                     <div className="flexItem">
                         <i className="small material-icons" onClick={toggleInput}>create_new_folder</i>
-                        <div>New Folder</div>
+                        <div className="hide-on-med-and-down">New Folder</div>
                     </div>
 
                     <div className="flexItem">
@@ -203,23 +203,23 @@ const ToolBar = () => {
                         <label for="file-input">
                             <i className="small material-icons">cloud_upload</i>
                         </label>
-                        <div>New File</div>
+                        <div className="hide-on-med-and-down">New File</div>
                         <input id="file-input" type="file" onChange={(e) => uploadFile(e.target.files[0])} style={{ display: "none" }} />
                     </div>
 
                     <div className="flexItem">
                         <i className="small material-icons" onClick={(e) => downloadFolder()}>cloud_download</i>
-                        <div>Download</div>
+                        <div className="hide-on-med-and-down">Download</div>
                     </div>
 
                     <div className="flexItem">
                         <i className="small material-icons" onClick={(e) => { if (window.confirm("Are you sure you wish to delete this Folder?")) deleteFolder() }}>delete</i>
-                        <div>Delete</div>
+                        <div className="hide-on-med-and-down">Delete</div>
                     </div>
 
                     <div className="flexItem">
                         <Link to={"/search"}><i className="small material-icons">search</i></Link>
-                        <div>Search</div>
+                        <div className="hide-on-med-and-down">Search</div>
                     </div>
 
 

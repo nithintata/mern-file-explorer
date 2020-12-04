@@ -63,6 +63,16 @@ tr {
   outline: none;
 }
 
+.toolBarContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  background-color: #2e3a48;
+  align-content: flex-start;
+  padding: 10px 20px;
+  min-height: 0px;
+}
+
 .collapsible-header {
   background-color: black !important;
   font-size: 17px;
