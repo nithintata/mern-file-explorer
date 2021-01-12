@@ -2,18 +2,28 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ![build](https://img.shields.io/badge/build-Passing-green.svg)
 ![Javascript](https://img.shields.io/badge/NodeJs-12.15.0-yellow.svg)
-![Javascript](https://img.shields.io/badge/React-v17.0-orange.svg)
+![Javascript](https://img.shields.io/badge/ReactJs-v17.0-orange.svg)
 <br>
 <br>
-This is a web-app designed to store <b>files/images</b> with different formats in a cloud databse and maintain a heirarchial directory structure. Here users can <b>create/delete/download</b>
+This is a web-app designed to store <b>files/images</b> with different formats in a cloud database and maintain a hierarchical directory structure. Here users can <b>create/delete/download</b>
 various <b>files/folders</b> from the web interface. A search system with multiple filters is incorporated to search the files/folders easily. Users can also share
 the files easily as the server automatically creates a shortened URL for easy sharing.
 
 <h3><u>Pre-requisites</u></h3><br>
 <ul>
 <li><b>Cloudinary: </b>Used to store assets in cloud database</li>
-<li><b>Mongodb: </b>Used to store meta data of files/folders to maintain heirarchial structure</li>
+<li><b>Mongodb: </b>Used to store meta data of files/folders to maintain hierarchical structure</li>
 <li><b>Bitly: </b>Used to create a shortend link for file sharing</li>
+<li><b>NodeJs: </b>Used for Backend</li>
+<li><b>ReactJs: </b>Used for Frontend</li>
+</ul>
+
+<h3><u>Implementation</u></h3><br>
+<ul>
+<li>The database schema for the project is located at<b><a href="models/"> models/</a></b> folder</li>
+<li>The implementation of these end points can be found at <b><a href="routes/">routes/</a></b> folder</li>
+<li>The react components are located at <b><a href="client/src/components/">client/src/components/</a></b> folder</li>
+<li>This project is implemented for single person point of view and hence authentication is not implemented</li>
 </ul>
 
 <h3><u>Deployment steps</u></h3><br>
